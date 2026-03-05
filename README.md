@@ -40,8 +40,9 @@ C'est le "cerveau" de l'application (modèle **ManouRecognizer**).
 ## 🛠️ Technologies Utilisées
 * **Python 3.10+**
 * **OpenCV :** Pour la manipulation d'images et l'implémentation de Haar Cascade.
-* **TensorFlow / Keras :** Pour l'architecture du réseau de neurones convolutionnel (CNN).
 * **Numpy :** Pour les calculs matriciels rapides.
+* **PyTorch :** Framework de Deep Learning utilisé pour l'entraînement et l'inférence du modèle CNN (`.pth`).
+* **Torchvision :** Pour les transformations d'images (Resize, Normalization).
 
 ---
 

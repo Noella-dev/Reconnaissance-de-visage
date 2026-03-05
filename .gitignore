@@ -1,3 +1,12 @@
-photos_autres/
+# Dossiers de photos et datasets
 photos_manou/
+photos_autres/
 results/
+
+*.jpg
+*.png
+*.jpeg
+
+
+# Modèles PyTorch
+*.pth
