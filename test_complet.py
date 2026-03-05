@@ -24,20 +24,20 @@ class FaceDetector:
         self.face_cascade = cv2.CascadeClassifier(cascade_path)
         
         if self.face_cascade.empty():
-            print("❌ Erreur: Impossible de charger le détecteur de visages!")
+            print(" Erreur: Impossible de charger le détecteur de visages!")
             self._download_cascade()
     
     def _download_cascade(self):
         """Télécharge le cascade classifier si absent"""
-        print("📥 Tentative de téléchargement du détecteur...")
+        print("Tentative de téléchargement du détecteur...")
         import urllib.request
         url = "https://raw.githubusercontent.com/opencv/opencv/master/data/haarcascades/haarcascade_frontalface_default.xml"
         try:
             urllib.request.urlretrieve(url, "haarcascade_frontalface_default.xml")
             self.face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-            print("✅ Détecteur téléchargé")
+            print("Détecteur téléchargé")
         except:
-            print("❌ Échec du téléchargement")
+            print(" Échec du téléchargement")
     
     def detect_faces(self, image):
         """Détecte tous les visages dans une image"""
@@ -160,7 +160,7 @@ class ManouDataset(Dataset):
             # Exclure les résultats précédents
             manou_images = [img for img in manou_images if '_result' not in img]
             
-            print(f"  👤 Photos de Manou trouvées: {len(manou_images)}")
+            print(f" Photos de Manou trouvées: {len(manou_images)}")
             
             for img_path in manou_images:
                 try:
@@ -176,7 +176,7 @@ class ManouDataset(Dataset):
                         self.labels.append(1)
                         
                 except Exception as e:
-                    print(f"    ❌ Erreur avec {img_path}: {e}")
+                    print(f"   Erreur avec {img_path}: {e}")
         
         # Charger les photos d'autres personnes
         autres_count = 0
@@ -185,7 +185,7 @@ class ManouDataset(Dataset):
                            glob.glob(os.path.join(autres_dir, "*.png")) + \
                            glob.glob(os.path.join(autres_dir, "*.jpeg"))
             
-            print(f"  👥 Photos d'autres trouvées: {len(autres_images)}")
+            print(f"  Photos d'autres trouvées: {len(autres_images)}")
             
             for img_path in autres_images:
                 try:
@@ -202,13 +202,13 @@ class ManouDataset(Dataset):
         
         if num_autres < num_manou // 2:
             needed = num_manou - num_autres
-            print(f"  🎭 Génération de {needed} visages synthétiques...")
+            print(f"  Génération de {needed} visages synthétiques...")
             for _ in range(needed):
                 fake_face = self._generate_fake_face()
                 self.images.append(fake_face)
                 self.labels.append(0)
         
-        print(f"✅ Dataset créé: {len(self.images)} images total")
+        print(f" Dataset créé: {len(self.images)} images total")
         print(f"   - Manou: {sum(self.labels)} images")
         print(f"   - Autres: {len(self.labels) - sum(self.labels)} images")
     
@@ -274,7 +274,7 @@ class ManouRecognitionSystem:
         print("="*60)
         
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        print(f"📱 Device: {self.device}")
+        print(f" Device: {self.device}")
         
         self.detector = FaceDetector()
         
@@ -295,13 +295,13 @@ class ManouRecognitionSystem:
             self.load_model(model_path)
         elif os.path.exists('modele_manou.pth'):
             self.load_model('modele_manou.pth')
-            print("✅ Modèle chargé depuis modele_manou.pth")
+            print(" Modèle chargé depuis modele_manou.pth")
         else:
-            print("⚠️  Aucun modèle trouvé. Entraînez d'abord le système.")
+            print("Aucun modèle trouvé. Entraînez d'abord le système.")
     
     def train(self, manou_dir='photos_manou', autres_dir='photos_autres', epochs=20):
         """Entraîne le modèle avec paramètres améliorés"""
-        print("\n🎯 DÉBUT DE L'ENTRAÎNEMENT AMÉLIORÉ")
+        print("\n DÉBUT DE L'ENTRAÎNEMENT AMÉLIORÉ")
         print(f"   - Dossier Manou: {manou_dir}")
         print(f"   - Dossier autres: {autres_dir}")
         print(f"   - Epochs: {epochs}")
@@ -309,7 +309,7 @@ class ManouRecognitionSystem:
         dataset = ManouDataset(manou_dir, autres_dir, self.transform, augment=True)
         
         if len(dataset) == 0:
-            print("❌ Aucune image trouvée!")
+            print(" Aucune image trouvée!")
             return False
         
         # Split 80/20
@@ -334,7 +334,7 @@ class ManouRecognitionSystem:
         history = {'train_loss': [], 'train_acc': [], 'val_loss': [], 'val_acc': []}
         best_val_acc = 0.0
         
-        print(f"\n📊 Entraînement sur {len(train_dataset)} images, validation sur {len(val_dataset)}")
+        print(f"\n Entraînement sur {len(train_dataset)} images, validation sur {len(val_dataset)}")
         
         for epoch in range(epochs):
             # Entraînement
@@ -379,11 +379,11 @@ class ManouRecognitionSystem:
             if val_acc > best_val_acc:
                 best_val_acc = val_acc
                 self.save_model('modele_manou.pth')
-                print(f"   💾 Meilleur modèle sauvegardé (Val: {val_acc:.1f}%)")
+                print(f"   Meilleur modèle sauvegardé (Val: {val_acc:.1f}%)")
         
         self._plot_training_history(history)
         
-        print(f"\n✅ Entraînement terminé!")
+        print(f"\n Entraînement terminé!")
         print(f"   Meilleure précision validation: {best_val_acc:.1f}%")
         return True
     
@@ -445,13 +445,13 @@ class ManouRecognitionSystem:
         if 'confidence_threshold' in checkpoint:
             self.confidence_threshold = checkpoint['confidence_threshold']
         self.model.eval()
-        print(f"📂 Modèle chargé: {path}")
+        print(f"Modèle chargé: {path}")
     
     def is_manou(self, image):
         """Détermine si une image contient Manou"""
         if isinstance(image, str):
             if not os.path.exists(image):
-                print(f"❌ Image non trouvée: {image}")
+                print(f" Image non trouvée: {image}")
                 return False, 0.0, []
             image = Image.open(image).convert('RGB')
         
@@ -463,10 +463,10 @@ class ManouRecognitionSystem:
         faces = self.detector.detect_faces(image_np)
         
         if len(faces) == 0:
-            print("👀 Aucun visage détecté")
+            print(" Aucun visage détecté")
             return False, 0.0, []
         
-        print(f"👥 {len(faces)} visage(s) détecté(s)")
+        print(f" {len(faces)} visage(s) détecté(s)")
         
         results = []
         
@@ -486,11 +486,11 @@ class ManouRecognitionSystem:
                 if prob_is_manou > 0.95:  # Seuil de certitude très haut
                     is_manou = True
                     conf_value = prob_is_manou
-                    label = f"✅ C'EST MANOU! ({conf_value:.1%})"
+                    label = f" C'EST MANOU! ({conf_value:.1%})"
                 else:
                     is_manou = False
                     conf_value = prob_not_manou
-                    label = f"❌ INCONNU ({prob_is_manou:.1%})"
+                    label = f" INCONNU ({prob_is_manou:.1%})"
                 
                 results.append({
                     'face_coords': (x, y, w, h),
@@ -511,7 +511,7 @@ class ManouRecognitionSystem:
     
     def analyze_image(self, image_path, display=True):
         """Analyse une image complète"""
-        print(f"\n🔍 Analyse de: {image_path}")
+        print(f"\n Analyse de: {image_path}")
         
         image = Image.open(image_path).convert('RGB')
         image_np = np.array(image)
@@ -525,7 +525,7 @@ class ManouRecognitionSystem:
             image_bgr = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
             annotated = self.detector.draw_faces(image_bgr, face_coords, labels)
             
-            global_msg = "✅ C'EST MANOU!" if is_manou else "❌ CE N'EST PAS MANOU"
+            global_msg = " C'EST MANOU!" if is_manou else " CE N'EST PAS MANOU"
             cv2.putText(annotated, global_msg, (20, 40),
                        cv2.FONT_HERSHEY_SIMPLEX, 1, 
                        (0, 255, 0) if is_manou else (0, 0, 255), 3)
@@ -538,10 +538,10 @@ class ManouRecognitionSystem:
             cv2.imwrite(result_path, annotated)
             print(f"💾 Résultat sauvegardé: {result_path}")
         
-        print(f"\n📋 RÉSUMÉ:")
+        print(f"\n RÉSUMÉ:")
         print(f"   Image: {os.path.basename(image_path)}")
         print(f"   Visages détectés: {len(face_results)}")
-        print(f"   Conclusion: {'✅ C\'EST MANOU!' if is_manou else '❌ CE N\'EST PAS MANOU'}")
+        print(f"   Conclusion: {' C\'EST MANOU!' if is_manou else ' CE N\'EST PAS MANOU'}")
         
         return {
             'is_manou': is_manou,
@@ -551,8 +551,8 @@ class ManouRecognitionSystem:
         }
     
     def real_time_detection(self, camera_id=0):
-        print("\n🎥 DÉTECTION EN TEMPS RÉEL")
-        print("📌 Appuyez sur 'q' pour quitter")
+        print("\n DÉTECTION EN TEMPS RÉEL")
+        print(" Appuyez sur 'q' pour quitter")
         
         cap = cv2.VideoCapture(camera_id)
         # Optimisation de la résolution pour éviter les lags
@@ -560,7 +560,7 @@ class ManouRecognitionSystem:
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
         if not cap.isOpened():
-            print("❌ Impossible d'ouvrir la caméra")
+            print(" Impossible d'ouvrir la caméra")
             return
         
         # Créer une fenêtre nommée fixe pour éviter les ouvertures multiples
@@ -600,7 +600,7 @@ class ManouRecognitionSystem:
 def cleanup():
     """Nettoie toutes les fenêtres OpenCV"""
     cv2.destroyAllWindows()
-    print("🧹 Fenêtres fermées")
+    print(" Fenêtres fermées")
 
 def setup_directories():
     """Crée les dossiers nécessaires"""
@@ -609,15 +609,15 @@ def setup_directories():
     for directory in directories:
         if not os.path.exists(directory):
             os.makedirs(directory, exist_ok=True)
-            print(f"📁 Dossier créé: {directory}/")
+            print(f" Dossier créé: {directory}/")
         else:
             images = glob.glob(os.path.join(directory, "*.jpg")) + \
                     glob.glob(os.path.join(directory, "*.png")) + \
                     glob.glob(os.path.join(directory, "*.jpeg"))
             images = [img for img in images if '_result' not in img]
-            print(f"📂 Dossier {directory}/: {len(images)} images")
+            print(f" Dossier {directory}/: {len(images)} images")
     
-    print("\n📋 STRUCTURE REQUISE:")
+    print("\n STRUCTURE REQUISE:")
     print("photos_manou/     ← VOS photos (.jpg, .png)")
     print("photos_autres/    ← Photos d'autres")
     print("results/          ← Résultats")
@@ -638,18 +638,18 @@ def main_menu():
         print("\n" + "="*40)
         print("MENU PRINCIPAL")
         print("="*40)
-        print("1. 🎯 Entraîner le modèle (RECOMMENCEZ ICI)")
-        print("2. 🔍 Analyser une image")
-        print("3. 🎥 Détection temps réel (webcam)")
-        print("4. ⚙️  Tester le détecteur")
-        print("5. 📊 Voir les courbes")
-        print("6. 🧹 Fermer les fenêtres")
-        print("7. 🚪 Quitter")
+        print("1.  Entraîner le modèle (RECOMMENCEZ ICI)")
+        print("2.  Analyser une image")
+        print("3.  Détection temps réel (webcam)")
+        print("4.  Tester le détecteur")
+        print("5.  Voir les courbes")
+        print("6.  Fermer les fenêtres")
+        print("7.  Quitter")
         
         choice = input("\nVotre choix (1-7): ").strip()
         
         if choice == '1':
-            print("\n📝 ENTRAÎNEMENT AMÉLIORÉ")
+            print("\n ENTRAÎNEMENT AMÉLIORÉ")
             
             manou_dir = 'photos_manou'
             autres_dir = 'photos_autres'
@@ -660,20 +660,20 @@ def main_menu():
             manou_photos = [p for p in manou_photos if '_result' not in p]
             
             if len(manou_photos) == 0:
-                print(f"\n⚠️  Aucune photo dans {manou_dir}/")
+                print(f"\n Aucune photo dans {manou_dir}/")
                 print(f"Ajoutez des photos et réessayez!")
                 continue
             
-            print(f"\n✅ {len(manou_photos)} photos trouvées")
+            print(f"\n {len(manou_photos)} photos trouvées")
             
             epochs = input("Nombre d'epochs [20]: ").strip()
             epochs = int(epochs) if epochs else 20
             
-            print(f"\n🚀 Entraînement pour {epochs} epochs...")
+            print(f"\n Entraînement pour {epochs} epochs...")
             system.train(manou_dir=manou_dir, autres_dir=autres_dir, epochs=epochs)
         
         elif choice == '2':
-            print("\n🖼️  ANALYSE D'IMAGE")
+            print("\n ANALYSE D'IMAGE")
             
             all_images = []
             for ext in ['*.jpg', '*.png', '*.jpeg']:
@@ -682,7 +682,7 @@ def main_menu():
             all_images = [img for img in all_images if '_result' not in img]
             
             if all_images:
-                print("\n📷 Images disponibles:")
+                print("\n Images disponibles:")
                 for i, img_path in enumerate(all_images[:10]):
                     print(f"  {i+1}. {os.path.basename(img_path)}")
                 if len(all_images) > 10:
@@ -695,22 +695,22 @@ def main_menu():
                 if 0 <= idx < len(all_images):
                     image_path = all_images[idx]
                 else:
-                    print("❌ Numéro invalide!")
+                    print(" Numéro invalide!")
                     continue
             
             if image_path and os.path.exists(image_path):
                 system.analyze_image(image_path, display=True)
             else:
-                print("❌ Fichier non trouvé!")
+                print(" Fichier non trouvé!")
         
         elif choice == '3':
-            print("\n🎥 MODE TEMPS RÉEL")
+            print("\n MODE TEMPS RÉEL")
             camera_id = input("ID caméra [0]: ").strip()
             camera_id = int(camera_id) if camera_id else 0
             system.real_time_detection(camera_id=camera_id)
         
         elif choice == '4':
-            print("\n⚙️  TEST DÉTECTEUR")
+            print("\n  TEST DÉTECTEUR")
             test_path = input("Image (vide pour webcam): ").strip()
             
             detector = FaceDetector()
@@ -718,7 +718,7 @@ def main_menu():
             if test_path and os.path.exists(test_path):
                 img = cv2.imread(test_path)
                 faces = detector.detect_faces(img)
-                print(f"👥 {len(faces)} visage(s)")
+                print(f" {len(faces)} visage(s)")
                 result = detector.draw_faces(img, faces)
                 cv2.imshow("Test", result)
                 cv2.waitKey(0)
@@ -726,9 +726,9 @@ def main_menu():
             else:
                 cap = cv2.VideoCapture(0)
                 if not cap.isOpened():
-                    print("❌ Webcam inaccessible")
+                    print(" Webcam inaccessible")
                 else:
-                    print("📹 Webcam - 'q' pour quitter")
+                    print(" Webcam - 'q' pour quitter")
                     while True:
                         ret, frame = cap.read()
                         if not ret:
@@ -752,18 +752,18 @@ def main_menu():
                 plt.tight_layout()
                 plt.show()
             else:
-                print("❌ Aucune courbe trouvée")
+                print(" Aucune courbe trouvée")
         
         elif choice == '6':
             cleanup()
         
         elif choice == '7':
             cleanup()
-            print("\n👋 Au revoir!")
+            print("\n Au revoir!")
             break
         
         else:
-            print("❌ Choix invalide!")
+            print(" Choix invalide!")
 
 # ============================================================================
 # EXÉCUTION
@@ -782,9 +782,9 @@ if __name__ == "__main__":
     try:
         main_menu()
     except KeyboardInterrupt:
-        print("\n\n⚠️  Interruption")
+        print("\n\n Interruption")
         cleanup()
     except Exception as e:
-        print(f"\n❌ Erreur: {e}")
+        print(f"\n Erreur: {e}")
         cleanup()
         raise

@@ -1,10 +1,10 @@
-# 🤖 ManouRecognizer : Système Hybride de Reconnaissance Faciale
+# FaceDetector : Système Hybride de Reconnaissance Faciale
 
 Ce projet combine la rapidité des algorithmes classiques et la puissance du Deep Learning pour créer un système de surveillance capable de détecter et d'identifier des individus en temps réel via webcam.
 
 ---
 
-## 🧠 Architecture du Système
+## Architecture du Système
 
 Le projet repose sur deux piliers technologiques complémentaires :
 
@@ -27,7 +27,7 @@ C'est le "cerveau" de l'application (modèle **ManouRecognizer**).
 
 ---
 
-## ⚙️ Pipeline de Traitement
+## Pipeline de Traitement
 
 1.  **Capture :** Lecture du flux vidéo brut via OpenCV.
 2.  **Localisation (Haar Cascade) :** Détection de la présence d'un visage et recadrage (crop).
@@ -37,7 +37,7 @@ C'est le "cerveau" de l'application (modèle **ManouRecognizer**).
 
 ---
 
-## 🛠️ Technologies Utilisées
+## Technologies Utilisées
 * **Python 3.10+**
 * **OpenCV :** Pour la manipulation d'images et l'implémentation de Haar Cascade.
 * **Numpy :** Pour les calculs matriciels rapides.
@@ -46,11 +46,11 @@ C'est le "cerveau" de l'application (modèle **ManouRecognizer**).
 
 ---
 
-## 🚀 Installation & Lancement
+## Installation & Lancement
 
 ```bash
 # Installation des dépendances
-pip install opencv-python tensorflow numpy
+pip install torch torchvision opencv-python numpy
 
 # Lancement de l'application
-python main.py
+python test_complet.py
